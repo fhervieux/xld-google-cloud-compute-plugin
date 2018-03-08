@@ -49,6 +49,8 @@
         <property name="subnetwork" kind="string" required="false" description="Name of the VPC subnetwork"/>
         <property name="externalAddress" kind="string" required="false"  description="External IP address defined in VPC network"/>
         <property name="metadata" kind="map_string_string" required="false" description="compute metadata"/>
+        <property name="serviceAccount" kind="string" required="false" description="Id (email) of a service account to associate with the instance"/>
+        <property name="accessScopes" kind="list_of_string" required="false" description="List of access scopes for the service account"/>
 
         <property name="waitOnCreate" kind="integer" required="true" default="60" description="in seconds"
                   category="Other"/>

@@ -18,6 +18,8 @@ import org.jclouds.googlecomputeengine.domain.Instance;
 import org.jclouds.googlecomputeengine.domain.JCloudGoogleCompute;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Charsets.UTF_8;
@@ -31,6 +33,8 @@ public class JCloudGoogleComputeTest {
         String zone = "europe-west1-b";
         String network = "default";
         String subnetwork = null;
+        String serviceAccount = null;
+        List<String> accessScopes = new ArrayList<>();
 
         String instanceName = "simple-instance-4";
         String imageName = "ubuntu-1710";
@@ -48,7 +52,7 @@ public class JCloudGoogleComputeTest {
         metadata.put("startup-script-url", "gs://ci-scripts/start-vm.sh");
         {
             JCloudGoogleCompute googleCompute = new JCloudGoogleCompute(client_email, private_key);
-            selfLinkCreate = googleCompute.createInstance(instanceName, imageName, "ubuntu-os-cloud", machine, zone, network, subnetwork, externalAddress, metadata);
+            selfLinkCreate = googleCompute.createInstance(instanceName, imageName, "ubuntu-os-cloud", machine, zone, network, subnetwork, externalAddress, metadata, serviceAccount, accessScopes);
         }
         {
             JCloudGoogleCompute googleCompute = new JCloudGoogleCompute(json_file_path);

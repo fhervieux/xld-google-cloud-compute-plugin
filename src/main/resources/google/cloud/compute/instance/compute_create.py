@@ -21,9 +21,11 @@ network = deployed.network
 subnetwork = deployed.subnetwork
 externalAddress = deployed.externalAddress
 metadata = deployed.metadata
+serviceAccount = deployed.serviceAccount
+accessScopes = deployed.accessScopes
 
 instanceName = deployed.instanceName if deployed.instanceName else deployed.name
 
 print("Create new instance {} ...".format(instanceName))
-operationSelfLink = googleCompute.createInstance(instanceName, image, imageProject, machine, zone, network, subnetwork, externalAddress, metadata)
+operationSelfLink = googleCompute.createInstance(instanceName, image, imageProject, machine, zone, network, subnetwork, externalAddress, metadata, serviceAccount, accessScopes)
 deployed.operationSelfLink = operationSelfLink
