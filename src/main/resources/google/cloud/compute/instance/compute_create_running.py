@@ -22,6 +22,9 @@ else:
     instance = googleCompute.getInstanceByName(instanceName, zone)
     print("instance is {0}".format(instance))
     deployed.instanceId = instance.selfLink().toString()
-    deployed.publicIp = instance.networkInterfaces().get(0).accessConfigs().get(0).natIP()
+    deployed.privateIp = instance.networkInterfaces().get(0).networkIP()
+    if instance.networkInterfaces().get(0).accessConfigs():
+        deployed.publicIp = instance.networkInterfaces().get(0).accessConfigs().get(0).natIP()
     print("instance ID is {0}".format(deployed.instanceId))
+    print("private  IP is {0}".format(deployed.privateIp))
     print("public   IP is {0}".format(deployed.publicIp))

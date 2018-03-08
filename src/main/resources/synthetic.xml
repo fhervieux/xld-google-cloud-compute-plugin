@@ -45,6 +45,8 @@
                   description="Google machine to use."/>
         <property name="imageProject" kind="string" required="true" default="ubuntu-os-cloud" description="Google Project where the image is stored."/>
         <property name="image" kind="string" required="true" default="ubuntu-1710" description="Google image to use."/>
+        <property name="network" kind="string" required="true" default="default" description="Name of the VPC network"/>
+        <property name="subnetwork" kind="string" required="false" description="Name of the VPC subnetwork"/>
         <property name="externalAddress" kind="string" required="false"  description="External IP address defined in VPC network"/>
         <property name="metadata" kind="map_string_string" required="false" description="compute metadata"/>
 
@@ -56,6 +58,7 @@
 
         <property name="operationSelfLink" kind="string" required="false" category="Output"/>
         <property name="instanceId" kind="string" required="false" category="Output"/>
+        <property name="privateIp" kind="string" required="false" category="Output"/>
         <property name="publicIp" kind="string" required="false" category="Output"/>
     </type>
 </synthetic>

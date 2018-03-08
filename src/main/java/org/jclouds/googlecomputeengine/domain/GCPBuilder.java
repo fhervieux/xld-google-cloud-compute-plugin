@@ -33,11 +33,11 @@ public class GCPBuilder {
     private List<Instance.ServiceAccount> serviceAccounts;
     private Instance.Scheduling scheduling;
 
-    public GCPBuilder(String name, URI machineType, URI network, List<Instance.NetworkInterface.AccessConfig> accessConfigs, URI sourceImage) {
+    public GCPBuilder(String name, URI machineType, URI network, URI subnetwork, List<Instance.NetworkInterface.AccessConfig> accessConfigs, URI sourceImage) {
         checkNotNull(name, "NewInstance name cannot be null");
         this.name = name;
         this.machineType = machineType;
-        this.networkInterfaces = ImmutableList.of(NewInstance.NetworkInterface.create(network, accessConfigs));
+        this.networkInterfaces = ImmutableList.of(NewInstance.NetworkInterface.create(network, subnetwork, accessConfigs));
         this.disks = Arrays.asList(AttachDisk.newBootDisk(sourceImage));
     }
 

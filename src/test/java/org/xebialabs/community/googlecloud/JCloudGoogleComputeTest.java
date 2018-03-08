@@ -29,6 +29,8 @@ public class JCloudGoogleComputeTest {
         String machine = "n1-standard-1";
         String project = "just-terminus-194507";
         String zone = "europe-west1-b";
+        String network = "default";
+        String subnetwork = null;
 
         String instanceName = "simple-instance-4";
         String imageName = "ubuntu-1710";
@@ -46,7 +48,7 @@ public class JCloudGoogleComputeTest {
         metadata.put("startup-script-url", "gs://ci-scripts/start-vm.sh");
         {
             JCloudGoogleCompute googleCompute = new JCloudGoogleCompute(client_email, private_key);
-            selfLinkCreate = googleCompute.createInstance(instanceName, imageName, "ubuntu-os-cloud", machine, zone, externalAddress, metadata);
+            selfLinkCreate = googleCompute.createInstance(instanceName, imageName, "ubuntu-os-cloud", machine, zone, network, subnetwork, externalAddress, metadata);
         }
         {
             JCloudGoogleCompute googleCompute = new JCloudGoogleCompute(json_file_path);

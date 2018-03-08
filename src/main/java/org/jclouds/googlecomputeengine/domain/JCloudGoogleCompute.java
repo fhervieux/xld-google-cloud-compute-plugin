@@ -41,6 +41,7 @@ import java.net.URI;
 import java.util.*;
 
 import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.compute.options.TemplateOptions.Builder.runScript;
 import static org.jclouds.googlecomputeengine.options.ListOptions.Builder.filter;
 
@@ -71,15 +72,16 @@ public class JCloudGoogleCompute {
         return o.selfLink().toString();
     }
 
-    public String createInstance(String instanceName, String imageName, String imageProject, String machine, String zone, String externalAddress, Map<String,String> metadata) {
+    public String createInstance(String instanceName, String imageName, String imageProject, String machine, String zone, String networkName, String subnetworkName, String externalAddress, Map<String,String> metadata) {
         URI machineTypeURL = googleApi.machineTypesInZone(zone).get(machine).selfLink();
         System.out.println("machineTypeURL = " + machineTypeURL);
 
         Image image = searchImage(imageName, imageProject);
         System.out.println("image = " + image);
 
-        Instance.NetworkInterface.AccessConfig accessConfig = getDefaultAccessConfig();
+        List<Instance.NetworkInterface.AccessConfig> accessConfigs = new ArrayList<>();
         if (!Strings.isNullOrEmpty(externalAddress)) {
+            Instance.NetworkInterface.AccessConfig accessConfig = getDefaultAccessConfig();
             Region region = getRegion(zone);
             System.out.println("region = " + region);
             AddressApi addressApi = googleApi.addressesInRegion(region.name());
@@ -89,18 +91,28 @@ public class JCloudGoogleCompute {
             System.out.println("ip = " + ip);
             Instance.NetworkInterface.AccessConfig external_nat = Instance.NetworkInterface.AccessConfig.create("External NAT", Instance.NetworkInterface.AccessConfig.Type.ONE_TO_ONE_NAT, ip);
             accessConfig = external_nat;
+            System.out.println("accessConfig = " + accessConfig);
+            accessConfigs.add(accessConfig);
         }
-        System.out.println("accessConfig = " + accessConfig);
 
-        Network aDefault = googleApi.networks().get("default");
-        URI networkURL = aDefault.selfLink();
+        Network network = googleApi.networks().get(networkName);
+        URI networkURL = network.selfLink();
         if (networkURL == null) {
-            throw new RuntimeException("Your project does not have a default network. Please recreate the default network or try again with a new project");
+            throw new RuntimeException(String.format("Your project does not have a network '%s'.", networkName));
         }
         System.out.println("networkURL = " + networkURL);
 
+        URI subnetworkURL = null;
+        if (!Strings.isNullOrEmpty(subnetworkName)) {
+            Region region = getRegion(zone);
+            Subnetwork subnetwork = googleApi.subnetworksInRegion(region.name()).get(subnetworkName);
+            if (subnetwork == null) {
+                throw new RuntimeException(String.format("No subnetwork '%s' found for the zone '%s'.", subnetworkName, zone));
+            }
+            subnetworkURL = subnetwork.selfLink();
+        }
 
-        GCPBuilder gcpBuilder = new GCPBuilder(instanceName, machineTypeURL, networkURL, Arrays.asList(accessConfig), image.selfLink());
+        GCPBuilder gcpBuilder = new GCPBuilder(instanceName, machineTypeURL, networkURL, subnetworkURL, accessConfigs, image.selfLink());
         NewInstance newInstance = gcpBuilder.metadata(metadata).build();
 
         Operation o = getInstanceApi(zone).create(newInstance);
